@@ -119,7 +119,7 @@ def list_equipment():
 def list_bookings():
     return jsonify(load_bookings())
 
-#also possible problem for the maintenance check
+#possible problem for the maintenance check to display availability
 @app.route("/api/availability")
 def availability():
     from_date = parse_date(request.args["from"])
@@ -129,11 +129,15 @@ def availability():
     available = []
     for item in load_equipment():
         conflict = find_conflicting_booking(item["id"], from_date, to_date, bookings)
+        if item.get("status") != "maintenance":
+            continue
         if conflict is None:
             available.append(item)
+        
     return jsonify(available)
 
 #possible problem for the maintenance check
+#Reason for the problem: The code doesnt check the status of the equipment, so it will allow booking for equipment in maintenance.
 @app.route("/api/bookings", methods=["POST"])
 def create_booking():
     data = request.get_json(force=True)
@@ -141,6 +145,9 @@ def create_booking():
     equipment = get_equipment(data.get("equipment_id"))
     if equipment is None:
         return jsonify({"error": "Unknown equipment"}), 400
+
+    if equipment.get("status") == "maintenance":
+        return jsonify({"error": "Equipment is currently in maintenance"}), 400
 
     from_date = parse_date(data["from_date"])
     to_date = parse_date(data["to_date"])

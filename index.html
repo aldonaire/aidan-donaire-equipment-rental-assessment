@@ -45,7 +45,10 @@
       equipmentList = await res.json();
       const select = document.getElementById("equipment");
       select.innerHTML = "";
+      // Also remove the under maintenance equipment from the list
       equipmentList.forEach(item => {
+        if(item.status !== "available") return;
+
         const opt = document.createElement("option");
         opt.value = item.id;
         opt.textContent = `${item.name} (PHP ${item.daily_rate}/day)`;
@@ -111,9 +114,13 @@
       }
     }
 
+    // Possible problem for the frontend total to 0 bug
+    // Reason for the problem: There is no event listener for the "to" date input, so when the user changes the end date, the total is not updated. Also changing the change event into input for better experience (Note: change works fine since the calendar covers the total).
     document.getElementById("equipment").addEventListener("change", updateTotal);
-    document.getElementById("from").addEventListener("change", updateTotal);
+    document.getElementById("from").addEventListener("input", updateTotal);
+    document.getElementById("to").addEventListener("input", updateTotal);
     document.getElementById("book").addEventListener("click", createBooking);
+    
 
     loadEquipment();
   </script>
