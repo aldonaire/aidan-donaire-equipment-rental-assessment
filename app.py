@@ -68,15 +68,19 @@ def get_equipment(equipment_id):
 def parse_date(value):
     return date.fromisoformat(value)
 
+#Possible problem for the booking bug total to 0
 
 def rental_days(from_date, to_date):
     """Number of days a rental covers."""
     return (to_date - from_date).days
 
-
+#Possible Problem for the double booking bug
+# Reason for the problem: "return start_b <= start_a <= end_b" only checks if the new booking starts inside the old booking
+# So basically it does not detect cases if the new booking completely contains the old booking or if the new booking starts earlier and ends during the old booking
 def dates_overlap(start_a, end_a, start_b, end_b):
     """True if date range A overlaps date range B."""
-    return start_b <= start_a <= end_b
+    # return start_b <= start_a <= end_b
+    return start_a <= end_b and end_a>= start_b
 
 
 def find_conflicting_booking(equipment_id, from_date, to_date, bookings):
@@ -114,7 +118,7 @@ def list_equipment():
 def list_bookings():
     return jsonify(load_bookings())
 
-
+#also possible problem for the maintenance check
 @app.route("/api/availability")
 def availability():
     from_date = parse_date(request.args["from"])
@@ -122,13 +126,13 @@ def availability():
     bookings = load_bookings()
 
     available = []
-    for item in EQUIPMENT:
+    for item in load_equipment():
         conflict = find_conflicting_booking(item["id"], from_date, to_date, bookings)
         if conflict is None:
             available.append(item)
     return jsonify(available)
 
-
+#possible problem for the maintenance check
 @app.route("/api/bookings", methods=["POST"])
 def create_booking():
     data = request.get_json(force=True)
