@@ -69,10 +69,11 @@ def parse_date(value):
     return date.fromisoformat(value)
 
 #Possible problem for the booking bug total to 0
-
+# Reason for the problem: "return (to_date - from_date).days" doesnt count the last day of the rental, so if the rental is for 1 day, it will return 0 days instead oof 1.
+#fast solution just add 1
 def rental_days(from_date, to_date):
     """Number of days a rental covers."""
-    return (to_date - from_date).days
+    return (to_date - from_date).days + 1
 
 #Possible Problem for the double booking bug
 # Reason for the problem: "return start_b <= start_a <= end_b" only checks if the new booking starts inside the old booking
