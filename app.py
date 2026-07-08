@@ -23,12 +23,14 @@ app = Flask(__name__)
 # Data
 # ---------------------------------------------------------------------------
 
-EQUIPMENT = [
-    {"id": 1, "name": "Canon DSLR Camera", "daily_rate": 1500.0, "status": "available"},
-    {"id": 2, "name": "Cordless Drill",     "daily_rate": 480.0,  "status": "available"},
-    {"id": 3, "name": "HD Projector",       "daily_rate": 900.0, "status": "maintenance"},
-    {"id": 4, "name": "PA Speaker System",  "daily_rate": 1800.0, "status": "available"},
-]
+# EQUIPMENT = [
+#     {"id": 1, "name": "Canon DSLR Camera", "daily_rate": 1500.0, "status": "available"},
+#     {"id": 2, "name": "Cordless Drill",     "daily_rate": 480.0,  "status": "available"},
+#     {"id": 3, "name": "HD Projector",       "daily_rate": 900.0, "status": "maintenance"},
+#     {"id": 4, "name": "PA Speaker System",  "daily_rate": 1800.0, "status": "available"},
+# ]
+
+EQUIPMENT_FILE = "equipment.json"
 
 BOOKINGS_FILE = "bookings.json"
 
@@ -45,8 +47,15 @@ def save_bookings(bookings):
         json.dump(bookings, f, indent=2)
 
 
+def load_equipment():
+    if os.path.exists(EQUIPMENT_FILE):
+        with open(EQUIPMENT_FILE) as f:
+            return json.load(f)
+    return []
+
+
 def get_equipment(equipment_id):
-    for item in EQUIPMENT:
+    for item in load_equipment():
         if item["id"] == equipment_id:
             return item
     return None
@@ -98,7 +107,7 @@ def index():
 
 @app.route("/api/equipment")
 def list_equipment():
-    return jsonify(EQUIPMENT)
+    return jsonify(load_equipment())
 
 
 @app.route("/api/bookings")

@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "name": "Canon DSLR Camera", 
+        "daily_rate": 1500.0, 
+        "status": "available"
+    },
+    {
+        "id": 2, 
+        "name": "Cordless Drill",     
+        "daily_rate": 480.0,  
+        "status": "available"
+    },
+    {
+        "id": 3, 
+        "name": "HD Projector",       
+        "daily_rate": 900.0, 
+        "status": "maintenance"
+    },
+    {
+        "id": 4, 
+        "name": "PA Speaker System",  
+        "daily_rate": 1800.0, 
+        "status": "available"
+    }
+]
